@@ -38,19 +38,43 @@ const CustomP = styled.div`
 const UploadBtn = styled.button`
   width: 400px;
   height: 100px;
+  border: none;
+  background-color: #2b6652;
+  color: #d4cd9b;
+  font-size: 40px;
+  font-weight: 500;
+  border-radius: 15px;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
+  &:hover {
+    box-shadow: none;
+  }
+`;
+
+const ResetBtn = styled.div`
+  background-color: #2b6652;
+  color: #d4cd9b;
+  width: 300px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  font-weight: 500;
+  border-radius: 12px;
 `;
 
 const GraphWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 40px;
+  align-items: center;
 `;
 
 function App() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File>();
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState();
+  const [result, setResult] = useState(12);
   const [pCategories, setPCategories] = useState([
     1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998,
   ]);
@@ -59,6 +83,18 @@ function App() {
   ]);
   const [pData, setPData] = useState([30, 40, 45, 50, 49, 60, 70, 91]);
   const [nData, setNData] = useState([30, 40, 45, 50, 49, 60, 70, 91]);
+
+  const onReset = () => {
+    window.location.reload();
+  };
+
+  const sortLabel = (a: any, b: any) => {
+    if (a.value < b.value) {
+      return 1;
+    } else {
+      return -1;
+    }
+  };
   const onTest = () => {
     const formData = new FormData();
     if (uploadedFiles) {
@@ -74,18 +110,21 @@ function App() {
       },
     })
       .then((response) => {
-        setIsLoading(false);
         console.log(response.data);
-        setResult(response.data);
+        const tempP = [...response.data.data.positive];
+        const tempN = [...response.data.data.negative];
+        tempP.sort(sortLabel);
+        tempN.sort(sortLabel);
         const tempPCategories = [];
         const tempPData = [];
         const tempNCategories = [];
         const tempNData = [];
-        for (const element of response.data.positive) {
+
+        for (const element of tempP) {
           tempPCategories.push(element.item);
           tempPData.push(element.value);
         }
-        for (const element of response.data.negative) {
+        for (const element of tempN) {
           tempNCategories.push(element.item);
           tempNData.push(element.value);
         }
@@ -93,6 +132,8 @@ function App() {
         setPData(tempPData);
         setNCategories(tempNCategories);
         setNData(tempNData);
+        setResult(response.data);
+        setIsLoading(false);
       })
       .catch((error) => {
         setIsLoading(false);
@@ -106,8 +147,7 @@ function App() {
     setUploadedFiles(acceptedFiles[0]);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive, isDragAccept } =
-    useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   const pState = {
     options: {
@@ -116,6 +156,9 @@ function App() {
       },
       xaxis: {
         categories: pCategories,
+      },
+      title: {
+        text: "Positive",
       },
     },
     series: [
@@ -132,6 +175,12 @@ function App() {
       },
       xaxis: {
         categories: nCategories,
+      },
+      title: {
+        text: "Negative",
+      },
+      fill: {
+        colors: ["#E91E63"],
       },
     },
     series: [
@@ -162,6 +211,7 @@ function App() {
               type="bar"
               width="500"
             />
+            <ResetBtn onClick={onReset}>다시하기</ResetBtn>
           </GraphWrapper>
         ) : isSubmitted ? (
           <UploadBtn onClick={onTest}>Test</UploadBtn>
