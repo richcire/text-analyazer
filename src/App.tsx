@@ -67,7 +67,7 @@ function App() {
     setIsLoading(true);
     axios({
       method: "POST",
-      url: `http://localhost:5000/test`,
+      url: `http://localhost:5000/run`,
       data: formData,
       headers: {
         "Content-Type": "multipart/form-data",
