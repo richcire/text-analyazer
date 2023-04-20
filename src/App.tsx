@@ -26,6 +26,7 @@ const HeaderTitle = styled.div`
 const PageWrapper = styled.div`
   width: 100vw;
   height: 100vh;
+  padding-top: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -159,6 +160,9 @@ function App() {
       },
       title: {
         text: "Positive",
+        style: {
+          color: "#3FA0FC",
+        },
       },
     },
     series: [
@@ -178,6 +182,9 @@ function App() {
       },
       title: {
         text: "Negative",
+        style: {
+          color: "#E91E63",
+        },
       },
       fill: {
         colors: ["#E91E63"],
