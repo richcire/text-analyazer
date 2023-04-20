@@ -50,7 +50,7 @@ function App() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File>();
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState(12);
+  const [result, setResult] = useState();
   const [pCategories, setPCategories] = useState([
     1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998,
   ]);
