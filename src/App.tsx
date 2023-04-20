@@ -51,10 +51,14 @@ function App() {
   const [uploadedFiles, setUploadedFiles] = useState<File>();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(12);
-  const [categories, setCategories] = useState([
+  const [pCategories, setPCategories] = useState([
     1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998,
   ]);
-  const [data, setData] = useState([30, 40, 45, 50, 49, 60, 70, 91]);
+  const [nCategories, setNCategories] = useState([
+    1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998,
+  ]);
+  const [pData, setPData] = useState([30, 40, 45, 50, 49, 60, 70, 91]);
+  const [nData, setNData] = useState([30, 40, 45, 50, 49, 60, 70, 91]);
   const onTest = () => {
     const formData = new FormData();
     if (uploadedFiles) {
@@ -73,6 +77,22 @@ function App() {
         setIsLoading(false);
         console.log(response.data);
         setResult(response.data);
+        const tempPCategories = [];
+        const tempPData = [];
+        const tempNCategories = [];
+        const tempNData = [];
+        for (const element of response.data.positive) {
+          tempPCategories.push(element.item);
+          tempPData.push(element.value);
+        }
+        for (const element of response.data.negative) {
+          tempNCategories.push(element.item);
+          tempNData.push(element.value);
+        }
+        setPCategories(tempPCategories);
+        setPData(tempPData);
+        setNCategories(tempNCategories);
+        setNData(tempNData);
       })
       .catch((error) => {
         setIsLoading(false);
@@ -89,19 +109,35 @@ function App() {
   const { getRootProps, getInputProps, isDragActive, isDragAccept } =
     useDropzone({ onDrop });
 
-  const state = {
+  const pState = {
     options: {
       chart: {
         id: "basic-bar",
       },
       xaxis: {
-        categories,
+        categories: pCategories,
       },
     },
     series: [
       {
         name: "series-1",
-        data,
+        data: pData,
+      },
+    ],
+  };
+  const nState = {
+    options: {
+      chart: {
+        id: "basic-bar",
+      },
+      xaxis: {
+        categories: nCategories,
+      },
+    },
+    series: [
+      {
+        name: "series-1",
+        data: nData,
       },
     ],
   };
@@ -115,14 +151,14 @@ function App() {
         {result ? (
           <GraphWrapper>
             <ReactApexChart
-              options={state.options}
-              series={state.series}
+              options={pState.options}
+              series={pState.series}
               type="bar"
               width="500"
             />
             <ReactApexChart
-              options={state.options}
-              series={state.series}
+              options={nState.options}
+              series={nState.series}
               type="bar"
               width="500"
             />
